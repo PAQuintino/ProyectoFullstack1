@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import com.tienda.pedido_service.entity.Pedido;
 import com.tienda.pedido_service.service.PedidoService;
-
+import reactor.core.publisher.Mono;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -51,17 +51,20 @@ public class pedidoController {
     }
 
         @GetMapping("/{id}/detalle")
-    public ResponseEntity<Map<String, Object>> obtenerPedidoConDetalle(@PathVariable Long id) {
-        return ResponseEntity.ok(pedidoService.obtenerPedidoConDetalle(id));
+    public Mono<ResponseEntity<Map<String, Object>>> obtenerPedidoConDetalle(@PathVariable Long id) {
+        return pedidoService.obtenerPedidoConDetalle(id)
+                .map(ResponseEntity::ok);
     }
 
     @GetMapping("/cliente-info/{clienteId}")
-    public ResponseEntity<?> obtenerCliente(@PathVariable Long clienteId) {
-        return ResponseEntity.ok(pedidoService.obtenerCliente(clienteId));
+    public Mono<ResponseEntity<Object>> obtenerCliente(@PathVariable Long clienteId) {
+        return pedidoService.obtenerClienteMono(clienteId)
+                .map(ResponseEntity::ok);
     }
 
     @GetMapping("/producto-info/{productoId}")
-    public ResponseEntity<?> obtenerProducto(@PathVariable Long productoId) {
-        return ResponseEntity.ok(pedidoService.obtenerProducto(productoId));
+    public Mono<ResponseEntity<Object>> obtenerProducto(@PathVariable Long productoId) {
+        return pedidoService.obtenerProductoMono(productoId)
+                .map(ResponseEntity::ok);
     }
 }

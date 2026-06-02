@@ -51,34 +51,37 @@ public class PedidoService {
         return pedidoRepository.findByEstado(estado);
     }
 
-    public Object obtenerCliente(Long clienteId) {
+    public Mono<Object> obtenerClienteMono(Long clienteId) {
         return webClientBuilder.build()
                 .get()
                 .uri("http://localhost:8081/api/clientes/" + clienteId)
                 .retrieve()
                 .onStatus(status -> status.is4xxClientError(), response -> Mono.empty())
                 .bodyToMono(Object.class)
-                .block();
+                .defaultIfEmpty("Cliente no encontrado");
     }
 
-    public Object obtenerProducto(Long productoId) {
+    public Mono<Object> obtenerProductoMono(Long productoId) {
         return webClientBuilder.build()
                 .get()
                 .uri("http://localhost:8082/api/productos/" + productoId)
                 .retrieve()
                 .onStatus(status -> status.is4xxClientError(), response -> Mono.empty())
                 .bodyToMono(Object.class)
-                .block();
+                .defaultIfEmpty("Producto no encontrado");
     }
 
-    public Map<String, Object> obtenerPedidoConDetalle(Long pedidoId) {
+    public Mono<Map<String, Object>> obtenerPedidoConDetalle(Long pedidoId) {
         Pedido pedido = obtenerPorId(pedidoId);
-        Object cliente = obtenerCliente(pedido.getClienteId());
-        Object producto = obtenerProducto(pedido.getProductoId());
-        return Map.of(
-            "pedido", pedido,
-            "cliente", cliente != null ? cliente : "Cliente no encontrado",
-            "producto", producto != null ? producto : "Producto no encontrado"
-        );
+
+        Mono<Object> clienteMono = obtenerClienteMono(pedido.getClienteId());
+        Mono<Object> productoMono = obtenerProductoMono(pedido.getProductoId());
+
+        return Mono.zip(clienteMono, productoMono)
+                .map(tuple -> Map.of(
+                    "pedido", (Object) pedido,
+                    "cliente", tuple.getT1(),
+                    "producto", tuple.getT2()
+                ));
     }
 }

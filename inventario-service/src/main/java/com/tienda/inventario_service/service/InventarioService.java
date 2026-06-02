@@ -49,7 +49,7 @@ public class InventarioService {
     }
 
     public List<Stock> buscarPorCantidadMinima(Integer cantidad) {
-        return stockRepository.findByCantidadGreatherThan(cantidad);
+        return stockRepository.findByCantidadGreaterThan(cantidad);
     }
 
 }
