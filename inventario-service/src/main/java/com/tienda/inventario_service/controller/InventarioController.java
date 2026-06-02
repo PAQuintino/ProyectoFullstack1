@@ -50,5 +50,15 @@ public class InventarioController {
         inventarioService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/almacen/{almacenId}")
+    public ResponseEntity<List<Stock>> buscarPorAlmacen(@PathVariable Long almacenId) {
+        return ResponseEntity.ok(inventarioService.buscarPorAlmacenId(almacenId));
+    }
+
+    @GetMapping("/cantidad-mayor/{cantidad}")
+    public ResponseEntity<List<Stock>> buscarPorCantidadMinima(@PathVariable Integer cantidad) {
+        return ResponseEntity.ok(inventarioService.buscarPorCantidadMinima(cantidad));
+    }
     
 }

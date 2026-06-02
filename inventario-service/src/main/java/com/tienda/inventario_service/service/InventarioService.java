@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +42,14 @@ public class InventarioService {
     
     public void eliminar(long id){
         stockRepository.deleteById(id);
+    }
+
+    public List<Stock> buscarPorAlmacenId(Long almacenId) {
+        return stockRepository.findByAlmacenId(almacenId);
+    }
+
+    public List<Stock> buscarPorCantidadMinima(Integer cantidad) {
+        return stockRepository.findByCantidadGreatherThan(cantidad);
     }
 
 }

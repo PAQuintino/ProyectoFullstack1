@@ -1,5 +1,6 @@
 package com.tienda.pedido_service.controller;
 
+import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,5 +48,20 @@ public class pedidoController {
     public ResponseEntity<Void> eliminar(@PathVariable Long id){
         pedidoService.eliminar(id);
         return ResponseEntity.noContent().build();
+    }
+
+        @GetMapping("/{id}/detalle")
+    public ResponseEntity<Map<String, Object>> obtenerPedidoConDetalle(@PathVariable Long id) {
+        return ResponseEntity.ok(pedidoService.obtenerPedidoConDetalle(id));
+    }
+
+    @GetMapping("/cliente-info/{clienteId}")
+    public ResponseEntity<?> obtenerCliente(@PathVariable Long clienteId) {
+        return ResponseEntity.ok(pedidoService.obtenerCliente(clienteId));
+    }
+
+    @GetMapping("/producto-info/{productoId}")
+    public ResponseEntity<?> obtenerProducto(@PathVariable Long productoId) {
+        return ResponseEntity.ok(pedidoService.obtenerProducto(productoId));
     }
 }
